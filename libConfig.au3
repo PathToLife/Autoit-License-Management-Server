@@ -21,28 +21,32 @@
 #include <FileConstants.au3> ; Constants to be included in an AutoIt v3 script when using File functions. Modifying these will change the operation of the File Functions.
 
 $cmProgramName = "Config File Reader"
+$bShowComplete = False
 
-Func cmStart()
 
-   Local $strFilesCreated = ": "
-   Local $iCreated = 0
+Func CONFIGStart()
 
-   ; Start Checking files
+	Local $strFilesCreated = ": "
+	Local $iCreated = 0
 
-   If not FileExists(@ScriptDir&"\config.txt") Then
-	  $iCreated += 1
-	  $strFilesCreated = $strFilesCreated & "config, "
+	; Start Checking files
 
-	  If Not _FileCreate(@ScriptDir&"\config.txt") Then
-		 MsgBox($MB_SYSTEMMODAL, "Error", " Error Creating Config Files, Directory must be Writable. error:" & @error)
-	  EndIf
+	If not FileExists(@ScriptDir&"\autoLicense-config.txt") Then
+		$iCreated += 1
+		$strFilesCreated = $strFilesCreated & "config, "
 
-   EndIf
+		If Not _FileCreate(@ScriptDir&"\autoLicense-config.txt") Then
+			MsgBox($MB_SYSTEMMODAL, "Error", " Error Creating Config Files, Directory must be Writable. error:" & @error)
+		EndIf
+
+	EndIf
 
    ; Empty the Msg Box string for files created.
-   If $iCreated = 0 then
-	  $strFilesCreated = ""
-   EndIf
+	If $iCreated = 0 then
+		$strFilesCreated = ""
+	EndIf
 
-   MsgBox(0,$sProgramName, "File check completed"&@CRLF&@ScriptDir&@CRLF&"Created "&$iCreated&" Files"&$strFilesCreated)
+	If $bShowComplete then
+		MsgBox(0,$sProgramName, "File check completed"&@CRLF&@ScriptDir&@CRLF&"Created "&$iCreated&" Files"&$strFilesCreated)
+	EndIf
 EndFunc
