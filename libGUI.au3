@@ -25,7 +25,7 @@
 #include <MsgBoxConstants.au3> ; MSG boxes
 #include <WindowsConstants.au3> ; Windows Fourms
 
-; Program variables
+; Program variables, Dim will reuse/overwrite global variables if set
 Dim $g_bCloseConfim = False ; Show Close Confirm MsgBox
 Dim $g_bShowDate = False ; Show date in console
 Dim $g_MainWinW = 500 ; Main window width
@@ -36,10 +36,12 @@ If Not IsDeclared("sProgramName") Then
 
 	Global $sProgramName = "!NOTE! GUI TEST ONLY MODE"
 
+	$bTestMode = True ; A way for close loop to choose how to handle exit
+
 	startGUI()
 
 	For $i = 0 to 40
-		OKButton()
+		GUIConsoleOut("GUI standalone TEST")
 	Next
 
 	GUIConsoleOut("fjfkl;jel;kfjwlek;jfl;weqjl;fjlew;jfkljwelkqjfklwqjel;fjwelq;kfjl;wejfklewfl;weqnfkewmlckewjklqflkwe;fckl;wejflkjwlek")
@@ -54,15 +56,18 @@ EndIf
 Func startGUI()
 	Opt("GUIOnEventMode", 1) ; Change to OnEvent mode
 
-	Local $mainGUI = GUICreate($sProgramName, $g_MainWinw, $g_MainWinH) ; X Width, Y Width
+
 
 	; --- Interface Modules ---
+	Local $mainGUI = GUICreate($sProgramName, $g_MainWinW, $g_MainWinH) ; X Width, Y Width
 
 	; -- Labels --
-	GUICtrlCreateLabel("Console Output", 20, 40) ;x,y
+	Global $g_labelConsole = GUICtrlCreateLabel("Console Output", 20, 40) ;x,y
+	Global $g_labelIP = GUICtrlCreateLabel("Server: Not Ready", 10, $g_MainWinH - 20, $g_MainWinW - 40)
 
 	; -- Buttons --
 	Local $iOKButton = GUICtrlCreateButton("Test Console", 380, 20, 100, 30) ; X Cord, Y Cords, X Width, Y Width
+	Local $iClientsButton = GUICtrlCreateButton("Clients", 380, 380, 100, 30)
 
 	; -- Text Fields --
 	Global $g_idOutputEdit = GUICtrlCreateEdit("", 20, 60, $g_MainWinW - 40, 300, $GUI_SS_DEFAULT_EDIT + $ES_READONLY) ; X Cord, Y Cords, X Width, Y Width
@@ -72,15 +77,16 @@ Func startGUI()
 
 	; GUI Interrupts to run functions on click
 	GUISetOnEvent($GUI_EVENT_CLOSE, "CLOSEButton")
-	GUICtrlSetOnEvent($iOKButton, "OKButton")
+	GUICtrlSetOnEvent($iOKButton, "OKButton") ; Testing purposes currently
 	GUICtrlSetOnEvent($g_idCheckbox, "DATECheckbox") ; redundant for no since we use _IsChecked($GUIid)
 
 	; Control GUI module data
 	GUICtrlSetState($g_idCheckbox, $g_bShowDate)
-	GUIConsoleOutID($g_idOutputEdit, "Program Started") ; Set the output box with the encrypted text.
 
 	;Show GUI
 	GUISetState(@SW_SHOW, $mainGUI)
+
+
 EndFunc
 
 ; -- Control Functions --
